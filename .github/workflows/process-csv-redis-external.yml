@@ -68,6 +68,7 @@ jobs:
         with:
           repository: "educup/educup-scripts"
           fetch-depth: 1
+          lfs: true
           # If the repository is private, provide a token with the secret `GH_PAT`.
           # For public repositories, it can be omitted.
           token: ${{ secrets.GH_PAT }}
