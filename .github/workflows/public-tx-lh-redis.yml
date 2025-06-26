@@ -1,0 +1,16 @@
+name: public-tx-lh-redis
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-csv-redis-external.yml
+    with:
+      csv_path: "data/TX LH 2025.csv"
+      state: tx
+      speciality: lh
+      email_column: "Email 1"
+      npn_column: "Producer ID - NPN"
+      lastname_column: "L Name"
+    secrets: inherit
