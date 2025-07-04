@@ -2,6 +2,9 @@ name: public-tx-lh-redis
 
 on:
   workflow_dispatch:
+  schedule:
+    # Run every 1 hour
+    - cron: "0 * * * *"
 
 jobs:
   run-process:
