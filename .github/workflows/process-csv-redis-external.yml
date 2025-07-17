@@ -101,7 +101,7 @@ jobs:
             --email-column "${{ inputs.email_column }}" \
             --npn-column "${{ inputs.npn_column }}" \
             --lastname-column "${{ inputs.lastname_column }}" \
-            --use-modal true
+            --use-modal
 
       - name: Minimize uv cache
         run: uv cache prune --ci
