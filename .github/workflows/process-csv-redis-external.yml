@@ -100,7 +100,8 @@ jobs:
             --speciality "${{ inputs.speciality }}" \
             --email-column "${{ inputs.email_column }}" \
             --npn-column "${{ inputs.npn_column }}" \
-            --lastname-column "${{ inputs.lastname_column }}"
+            --lastname-column "${{ inputs.lastname_column }}" \
+            --use-modal true
 
       - name: Minimize uv cache
         run: uv cache prune --ci
