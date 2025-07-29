@@ -1,4 +1,4 @@
-name: public-tx-pc-postgres
+name: nc-lh-postgres
 
 on:
   workflow_dispatch:
@@ -8,11 +8,11 @@ on:
 
 jobs:
   run-process:
-    uses: ./.github/workflows/process-csv-postgres-external.yml
+    uses: ./.github/workflows/process-csv-postgres.yml
     with:
-      csv_path: "data/TX PC 2025.csv"
-      state: tx
-      speciality: pc
+      csv_path: "data/NC LH 2025.csv"
+      state: nc
+      speciality: lh
       email_column: "Email 1"
       npn_column: "Producer ID - NPN"
       lastname_column: "L Name"

@@ -1,0 +1,19 @@
+name: ia-lh-postgres
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every 1 hour
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-csv-postgres.yml
+    with:
+      csv_path: "data/IA LH 2025.csv"
+      state: ia
+      speciality: lh
+      email_column: "Email 1"
+      npn_column: "Producer ID - NPN"
+      lastname_column: "L Name"
+    secrets: inherit
