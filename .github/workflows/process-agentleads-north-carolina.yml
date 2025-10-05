@@ -16,7 +16,7 @@ jobs:
   run-process:
     uses: ./.github/workflows/process-agentleads.yml
     with:
-      state: "North Carolina"
+      state: "NC"
       limit: ${{ github.event.inputs.limit || '5000' }}
       batch_size: "150"
       verbose: true
