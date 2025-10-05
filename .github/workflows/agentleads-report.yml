@@ -39,8 +39,18 @@ jobs:
           echo "Report Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           echo "=================================================="
           echo ""
+          
+          # Generate Markdown report and write to GitHub Step Summary
+          uv run cli agentleads-report --markdown >> $GITHUB_STEP_SUMMARY
+          
+          # Also output plain text version to logs
+          echo ""
+          echo "Plain text version (for logs):"
+          echo ""
           uv run cli agentleads-report
+          
           echo ""
           echo "=================================================="
           echo "Report generation completed"
+          echo "Check the 'Summary' tab above for formatted report"
           echo "=================================================="
