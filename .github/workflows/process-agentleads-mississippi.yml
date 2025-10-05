@@ -1,0 +1,23 @@
+name: process-agentleads-mississippi
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '500'
+        type: string
+  schedule:
+    # Run every hour (14th largest backlog: 6,973 records)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "Mississippi"
+      limit: ${{ github.event.inputs.limit || '500' }}
+      batch_size: "50"
+      verbose: true
+    secrets: inherit

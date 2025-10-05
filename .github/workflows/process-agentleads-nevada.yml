@@ -1,0 +1,23 @@
+name: process-agentleads-nevada
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '1500'
+        type: string
+  schedule:
+    # Run every hour (11th largest backlog: 17,509 records)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "Nevada"
+      limit: ${{ github.event.inputs.limit || '1500' }}
+      batch_size: "100"
+      verbose: true
+    secrets: inherit

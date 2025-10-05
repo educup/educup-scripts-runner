@@ -1,0 +1,23 @@
+name: process-agentleads-colorado
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '1000'
+        type: string
+  schedule:
+    # Run every hour (13th largest backlog: 13,216 records)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "Colorado"
+      limit: ${{ github.event.inputs.limit || '1000' }}
+      batch_size: "100"
+      verbose: true
+    secrets: inherit

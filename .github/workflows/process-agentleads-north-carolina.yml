@@ -1,0 +1,23 @@
+name: process-agentleads-north-carolina
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '5000'
+        type: string
+  schedule:
+    # Run every hour (4th largest backlog: 62,112 records)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "North Carolina"
+      limit: ${{ github.event.inputs.limit || '5000' }}
+      batch_size: "150"
+      verbose: true
+    secrets: inherit

@@ -1,0 +1,23 @@
+name: process-agentleads-iowa
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '2000'
+        type: string
+  schedule:
+    # Run every hour (10th largest backlog: 20,544 records)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "Iowa"
+      limit: ${{ github.event.inputs.limit || '2000' }}
+      batch_size: "100"
+      verbose: true
+    secrets: inherit

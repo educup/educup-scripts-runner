@@ -1,0 +1,23 @@
+name: process-agentleads-arkansas
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '1000'
+        type: string
+  schedule:
+    # Run every hour (12th largest backlog: 14,284 records)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "Arkansas"
+      limit: ${{ github.event.inputs.limit || '1000' }}
+      batch_size: "100"
+      verbose: true
+    secrets: inherit

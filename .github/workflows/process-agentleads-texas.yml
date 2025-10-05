@@ -1,0 +1,23 @@
+name: process-agentleads-texas
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '10000'
+        type: string
+  schedule:
+    # Run every hour (Texas has the largest backlog)
+    - cron: "0 * * * *"
+
+jobs:
+  run-process:
+    uses: ./.github/workflows/process-agentleads.yml
+    with:
+      state: "Texas"
+      limit: ${{ github.event.inputs.limit || '10000' }}
+      batch_size: "200"
+      verbose: true
+    secrets: inherit

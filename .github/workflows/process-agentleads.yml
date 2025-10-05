@@ -1,0 +1,135 @@
+name: Process AgentLeads Base Workflow
+
+on:
+  workflow_call:
+    inputs:
+      state:
+        description: 'State to process'
+        required: true
+        type: string
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '5000'
+        type: string
+      batch_size:
+        description: 'Batch size for processing'
+        required: false
+        default: '100'
+        type: string
+      verbose:
+        description: 'Enable verbose logging'
+        required: false
+        default: true
+        type: boolean
+    secrets:
+      DATABASE_URL:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      state:
+        description: 'State to process (e.g., Texas, California)'
+        required: true
+        type: choice
+        options:
+          - Texas
+          - California
+          - Georgia
+          - North Carolina
+          - Missouri
+          - Pennsylvania
+          - Colorado
+          - Iowa
+      limit:
+        description: 'Maximum number of records to process'
+        required: false
+        default: '5000'
+        type: string
+      batch_size:
+        description: 'Batch size for processing'
+        required: false
+        default: '100'
+        type: string
+      verbose:
+        description: 'Enable verbose logging'
+        required: false
+        default: true
+        type: boolean
+  
+  schedule:
+    # Run every 6 hours for Texas (largest backlog)
+    - cron: '0 */6 * * *'
+
+jobs:
+  process-agentleads:
+    runs-on: ubuntu-latest
+    
+    env:
+      # Use workflow inputs or default to Texas for scheduled runs
+      STATE: ${{ inputs.state || github.event.inputs.state || 'Texas' }}
+      LIMIT: ${{ inputs.limit || github.event.inputs.limit || '5000' }}
+      BATCH_SIZE: ${{ inputs.batch_size || github.event.inputs.batch_size || '100' }}
+      VERBOSE: ${{ inputs.verbose || github.event.inputs.verbose || 'true' }}
+    
+    steps:
+      - name: Checkout educup-scripts
+        uses: actions/checkout@v4
+        with:
+          repository: educup/educup-scripts
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: educup-scripts
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        working-directory: educup-scripts
+        run: |
+          uv sync --all-groups --all-extras
+
+      - name: Setup Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+
+      - name: Verify Chrome installation
+        run: |
+          google-chrome --version
+          which google-chrome
+
+      - name: Process AgentLeads
+        working-directory: educup-scripts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          VERBOSE_FLAG=""
+          if [ "${{ env.VERBOSE }}" = "true" ]; then
+            VERBOSE_FLAG="--verbose"
+          fi
+          
+          echo "Processing state: ${{ env.STATE }}"
+          echo "Limit: ${{ env.LIMIT }}"
+          echo "Batch size: ${{ env.BATCH_SIZE }}"
+          
+          uv run cli process-agentleads \
+            --state "${{ env.STATE }}" \
+            --limit ${{ env.LIMIT }} \
+            --batch-size ${{ env.BATCH_SIZE }} \
+            $VERBOSE_FLAG
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentleads-${{ env.STATE }}-logs-${{ github.run_number }}
+          path: |
+            educup-scripts/*.log
+          retention-days: 7
