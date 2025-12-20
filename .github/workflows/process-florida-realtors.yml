@@ -61,6 +61,18 @@ jobs:
           google-chrome --version
           which google-chrome
 
+      - name: Install PostgreSQL client (psql)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Apply DB migration (florida_realtor_records)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Applying migration: database/migrations/002_add_florida_realtor_records.sql"
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f database/migrations/002_add_florida_realtor_records.sql
+
       - name: Process Florida Realtors CSV and push to PostgreSQL
         run: |
           LIMIT_FLAG=""
