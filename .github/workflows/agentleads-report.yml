@@ -11,7 +11,7 @@ jobs:
     env:
       UV_CACHE_DIR: /tmp/.uv-cache
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Checkout processing scripts repository (educup/educup-scripts)
         uses: actions/checkout@v4
